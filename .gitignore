@@ -1,6 +1,27 @@
+# Dados (brutos e processados; dezenas de GB)
 data/
-.venv/
+
+# Acesso ao banco (senha): só o modelo vai para o git
+.env
+.env.*
+!.env.example
+
+# Ambientes virtuais
+.venv*/
+venv/
+
+# Python
 __pycache__/
+*.pyc
+
+# Jupyter
 .ipynb_checkpoints/
+
+# Arquivos temporários da coleta
 *.part
+
+# Configurações locais (sistema, editor, Claude Code)
 .DS_Store
+.vscode/
+.idea/
+.claude/settings.local.json

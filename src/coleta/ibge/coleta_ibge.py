@@ -1,31 +1,13 @@
-"""Coleta de populacao por municipio (Nordeste) via API SIDRA/IBGE.
-
-Fontes combinadas (a populacao anual precisa de mais de uma tabela porque anos de
-Censo nao entram nas estimativas):
-  - Estimativas anuais:  tabela 6579 (variavel 9324)
-  - Censos 2000 e 2010:  tabela 200  (variavel 93, c1=0 total, c2=0 total)
-  - Censo 2022:          tabela 4714 (variavel 93)
-
-ATENCAO: numeros de tabela/variavel foram escritos de memoria e NAO foram testados.
-Confirme em https://sidra.ibge.gov.br (botao "API" de cada tabela) e ajuste TABELAS.
-O script imprime a cobertura (anos x UF) para voce conferir o que veio de fato.
-
-Saida: data/raw/ibge/populacao_municipios_ne.csv
-    cod_mun7, cod_mun6, uf_cod, ano, populacao, fonte
-
-Uso:
-    python src/coleta_ibge.py
-"""
 from __future__ import annotations
-
+import argparse
+import re
 import sys
 import time
 from pathlib import Path
-
 import pandas as pd
 import requests
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # pasta src/
 from config import DATA_RAW, N_MUNICIPIOS_NE, UFS_NORDESTE  # noqa: E402
 
 SIDRA = "https://apisidra.ibge.gov.br/values"
@@ -37,12 +19,11 @@ TABELAS = [
     dict(nome="estimativa_6579", tabela=6579, variavel=9324, periodos="all", extra="", prioridade=2),
 ]
 
-
 def montar_url(tab: dict, cods_uf: list[int]) -> str:
+    """Endereco da consulta ao SIDRA para uma tabela e UFs."""
     cods = ",".join(str(c) for c in cods_uf)
     return (f"{SIDRA}/t/{tab['tabela']}/n6/in n3 {cods}/v/{tab['variavel']}"
             f"/p/{tab['periodos']}{tab['extra']}")
-
 
 def parsear_sidra(payload: list[dict], fonte: str, prioridade: int) -> pd.DataFrame:
     """Converte a resposta do SIDRA (1a linha = cabecalho) em DataFrame longo."""
@@ -53,8 +34,10 @@ def parsear_sidra(payload: list[dict], fonte: str, prioridade: int) -> pd.DataFr
                    and str(v).lower().startswith("munic"))
     col_ano = next(k for k, v in cab.items() if k.startswith("D") and k.endswith("C")
                    and str(v).lower().startswith("ano"))
+    col_nome = col_mun[:-1] + "N"   # D1C -> D1N, ex.: "Natal (RN)" ou "Natal - RN"
     df = pd.DataFrame({
         "cod_mun7": [str(l[col_mun]) for l in linhas],
+        "municipio": [re.sub(r"( - [A-Z]{2}| \([A-Z]{2}\))$", "", str(l[col_nome])) for l in linhas],
         "ano": [int(l[col_ano]) for l in linhas],
         "populacao": pd.to_numeric([l["V"] for l in linhas], errors="coerce"),
     })
@@ -62,8 +45,8 @@ def parsear_sidra(payload: list[dict], fonte: str, prioridade: int) -> pd.DataFr
     df["prioridade"] = prioridade
     return df
 
-
 def baixar_tabela(tab: dict, cods_uf: list[int]) -> pd.DataFrame:
+    """Baixa uma tabela do SIDRA, com novas tentativas em erro temporario."""
     url = montar_url(tab, cods_uf)
     for i in range(5):
         r = requests.get(url, timeout=120)
@@ -75,23 +58,31 @@ def baixar_tabela(tab: dict, cods_uf: list[int]) -> pd.DataFrame:
         raise RuntimeError(f"HTTP {r.status_code} em {url}: {r.text[:200]}")
     raise RuntimeError(f"Falha ao baixar {url}")
 
-
 def consolidar(frames: list[pd.DataFrame]) -> pd.DataFrame:
     """Une as fontes. Se (municipio, ano) aparece em mais de uma, vale a de menor prioridade (Censo)."""
     df = pd.concat(frames, ignore_index=True)
     df = df.sort_values(["cod_mun7", "ano", "prioridade"]).drop_duplicates(["cod_mun7", "ano"], keep="first")
     df["cod_mun6"] = df["cod_mun7"].str[:6]
     df["uf_cod"] = df["cod_mun7"].str[:2].astype(int)
-    return df[["cod_mun7", "cod_mun6", "uf_cod", "ano", "populacao", "fonte"]].reset_index(drop=True)
+    # nome mais recente (alguns municipios mudaram de nome ao longo da serie)
+    df["municipio"] = df.groupby("cod_mun7")["municipio"].transform("last")
+    return df[["cod_mun7", "cod_mun6", "uf_cod", "municipio", "ano", "populacao", "fonte"]].reset_index(drop=True)
 
+def salvar_por_municipio(df: pd.DataFrame) -> None:
+    """Grava um CSV por municipio em DESTINO/{UF}/{municipio}.csv, com todos os anos."""
+    sigla = {cod: uf for uf, cod in UFS_NORDESTE.items()}
+    for (uf_cod, nome), grupo in df.groupby(["uf_cod", "municipio"]):
+        pasta = DESTINO / sigla[uf_cod]
+        pasta.mkdir(parents=True, exist_ok=True)
+        grupo[["cod_mun7", "cod_mun6", "ano", "populacao", "fonte"]].to_csv(pasta / f"{nome}.csv", index=False)
 
 def cobertura(df: pd.DataFrame) -> pd.DataFrame:
     """Municipios com populacao valida por ano. O esperado e N_MUNICIPIOS_NE em cada ano."""
     return (df.dropna(subset=["populacao"]).groupby("ano")["cod_mun7"].nunique()
             .rename("municipios").to_frame())
 
-
 def main() -> None:
+    argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter).parse_args()
     DESTINO.mkdir(parents=True, exist_ok=True)
     cods = list(UFS_NORDESTE.values())
     frames = []
@@ -106,6 +97,7 @@ def main() -> None:
     pop = consolidar(frames)
     saida = DESTINO / "populacao_municipios_ne.csv"
     pop.to_csv(saida, index=False)
+    salvar_por_municipio(pop)
 
     cob = cobertura(pop)
     print(f"\nSalvo: {saida} ({len(pop):,} linhas)")
@@ -115,7 +107,6 @@ def main() -> None:
     if len(faltando):
         print("\nAVISO: anos com cobertura incompleta:", list(faltando.index))
         print("Trate no notebook de limpeza (interpolacao entre censos/estimativas).")
-
 
 if __name__ == "__main__":
     main()
