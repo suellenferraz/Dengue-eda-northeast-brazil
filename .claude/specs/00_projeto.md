@@ -54,7 +54,7 @@ diante) leem só do banco.
 | Limpeza | `06_limpeza` | `src/limpeza/dengue/limpeza_dengue.py` | `notificacao_dengue_ne` | feito e validado |
 | Consistência da tratada | — | — | — | a fazer |
 | Tabelas de incidência | — | — | `incidencia_estado_ano`, `incidencia_estado_mes` | a fazer |
-| EDA | — | — | gráficos e achados | a fazer |
+| EDA (P1 a P4) | `07_incidencia`, `08_sazonalidade`, `09_municipios_atipicos`, `10_perfil_idade_sexo` | `src/eda/eda.py` | gráficos e achados | feito (01/11/2026) |
 | Dashboard | — | — | tabelas agregadas no Neon | a fazer |
 
 ## 6. Backlog

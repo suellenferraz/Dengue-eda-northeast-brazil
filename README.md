@@ -26,7 +26,10 @@ coleta (data/raw/)  →  carga (Postgres, camada bruta)  →  limpeza (camada tr
 | Carga do IBGE | `04_carga_ibge` | tabelas `populacao_ne`, `estado`, `municipio`, `populacao_municipio_ano` |
 | Análise do bruto | `05_analise` | qualidade dos dados e regras de limpeza |
 | Limpeza | `06_limpeza` | tabela `notificacao_dengue_ne` (residentes do Nordeste, 5,6 milhões) |
-| EDA | a fazer | incidência por estado e período |
+| EDA, P1 | `07_incidencia` | incidência por estado e ano; anos epidêmicos |
+| EDA, P2 | `08_sazonalidade` | perfil mensal, mês de pico, capital × interior |
+| EDA, P3 | `09_municipios_atipicos` | municípios acima ou abaixo do esperado para o estado (funil) |
+| EDA, P4 | `10_perfil_idade_sexo` | idade e sexo em anos epidêmicos e não epidêmicos |
 
 Tabelas e colunas: `.claude/specs/02_banco.md`. Decisões de análise: `.claude/specs/03_decisoes.md`.
 
@@ -61,9 +64,10 @@ src/
   carga/dengue/      carga da dengue no Postgres
   carga/ibge/        carga da população, estados e municípios
   limpeza/dengue/    tabela tratada das notificações do Nordeste
+  eda/               consultas, cores e funções comuns aos notebooks de EDA
   config.py          caminhos, período e conexão com o banco (lida do .env)
   dicionario.py      perfil das colunas para o dicionário de dados
-notebooks/           01 a 06, na ordem do pipeline
+notebooks/           01 a 10, na ordem do pipeline
 data/                dados brutos baixados (não versionado; pode ser apagado depois da carga)
 .claude/specs/       00_projeto, 01_fontes, 02_banco, 03_decisoes, 99_uso_ia
 .claude/skills/      coleta, carga, limpeza, eda, registro-ia, welcome (instruções para o assistente de IA)

@@ -18,6 +18,9 @@ relatório.
 | 10 | Denominador | aplicado | `populacao_municipio_ano` do mesmo ano; 2007 e 2023 interpolados | IBGE não tem esses anos |
 | 11 | Ano epidêmico | proposto | incidência < 100 baixa, 100–299 média, ≥ 300 por 100 mil alta | classificação usada pelo Ministério da Saúde |
 | 12 | Período da análise | proposto | 2000 a 2025; 2026 fora (parcial); 2025 sinalizado como sujeito a revisão | `notificacao_dengue_ne` tem 1 linha de 1999 e 2026 inteiro |
+| 13 | Litoral × semiárido (P2) | **pendente (grupo)** | provisório: capital × interior (`08_sazonalidade`) | o banco não tem a lista oficial do semiárido (SUDENE/IBGE); entraria como nova fonte |
+| 14 | Município atípico (P3) | proposto | funil com superdispersão aditiva (Spiegelhalter 2005): z = log(O/E) ÷ √(1/E + τ²), τ² por estado; alerta \|z\| > 1,96, atípico \|z\| > 3,09; período 2000–2025 somado | o ajuste multiplicativo (φ de 150 a 770) marcava quase só municípios grandes; o aditivo compara todos os portes |
+| 15 | Ano epidêmico na P4 | proposto | por estado-ano (incidência ≥ 300), não pelo Nordeste todo | as epidemias não são simultâneas entre estados (correlação mediana 0,41, `07_incidencia`) |
 
 ## Pendências
 - Comunicar ao grupo as decisões 6 e 7 e fechar a 2.
