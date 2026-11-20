@@ -13,7 +13,7 @@ sem afirmar que um fator causou o aumento da dengue.
 
 ## 2. Perguntas de pesquisa
 1. Como a incidência evoluiu por estado e quais anos foram epidêmicos no Nordeste?
-2. Existe sazonalidade mensal consistente, e ela difere entre estados (litoral × semiárido)?
+2. Existe sazonalidade mensal consistente, e como o padrão varia entre os estados e entre a capital e o interior de cada estado?
 3. Quais municípios têm incidência atípica em relação ao seu estado, considerando o porte populacional?
 4. A distribuição por faixa etária e sexo muda entre anos epidêmicos e não epidêmicos?
 
