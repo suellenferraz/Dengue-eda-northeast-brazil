@@ -128,9 +128,9 @@ Outros formatos por período: `sg_uf` e `sg_uf_not` vêm como sigla nos anos ant
 
 ### Definição e impacto de caso provável
 
-O Ministério da Saúde inclui os casos suspeitos de dengue notificados, exceto os descartados. A classificação vazia indica ausência de encerramento registrado no campo e permanece elegível. O código `0` é preservado como valor de significado desconhecido e permanece elegível. O código `13` fica fora por identificar chikungunya na ficha conjunta. [Definição de caso provável no OpenDataSUS](https://dadosabertos.saude.gov.br/dataset/arboviroses-dengue) · [Recodificação para inconclusivo no SINAN](https://portalsinan.saude.gov.br/images/documentos/Agravos/NINDIV/DIC_DADOS_Notificacao_Individual_v5.pdf)
+O Ministério da Saúde inclui os casos suspeitos de dengue notificados, exceto os descartados. A classificação vazia significa que a classificação final está ausente no arquivo e permanece elegível. O projeto preserva o código `0` como valor de significado desconhecido e o mantém entre os prováveis. O código `13` fica fora por identificar chikungunya na ficha conjunta. [Definição de caso provável no OpenDataSUS](https://dadosabertos.saude.gov.br/dataset/arboviroses-dengue) · [Recodificação para inconclusivo no SINAN](https://portalsinan.saude.gov.br/images/documentos/Agravos/NINDIV/DIC_DADOS_Notificacao_Individual_v5.pdf)
 
-Comparação na tabela tratada do Neon em 20/11/2026. A série anual usa o ano de notificação e o notebook 08 usa a data dos sintomas. Ambos cobrem 2000–2025.
+Comparação na tabela tratada do PostgreSQL local em 20/11/2026. A série anual usa o ano de notificação e o notebook 08 usa a data dos sintomas. Ambos cobrem 2000–2025. A coluna `caso_provavel` coincide com a regra validada em todos os registros da tabela.
 
 | Cenário | Série anual (total e variação) | Sazonalidade (total e variação) |
 |---|---:|---:|
@@ -139,7 +139,7 @@ Comparação na tabela tratada do Neon em 20/11/2026. A série anual usa o ano d
 | Excluir também o código `0` | 4.122.764 (−55.686; −1,33%) | 4.114.307 (−55.683; −1,34%) |
 | Excluir também vazios e código `0` | 3.908.899 (−269.551; −6,45%) | 3.900.894 (−269.096; −6,45%) |
 
-A tabela tratada consultada não contém o código `13`, inclusive em 2026. As exclusões de vazio e `0` acima são cenários de sensibilidade. A maior redução em número de casos seria em 2002, com 81.584 a menos (30,47% dos 267.759 prováveis daquele ano).
+A tabela tratada local não contém o código `13`. No arquivo parcial de 2026, há 8.541 registros tratados sem classificação e 53 com código `0`. As exclusões de vazio e `0` acima são cenários de sensibilidade.
 
 ## 5. Qualidade do bruto (Nordeste, `05_analise.ipynb`)
 | Ponto | Achado |
