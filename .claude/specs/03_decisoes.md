@@ -14,11 +14,11 @@ relatório.
 | 6 | Definição de caso | decidido (29/10/2026) | **caso provável** = classificação ≠ 5 (principal); **confirmado** = 1–4 ou 10–12 (comparação) | 2014, 2015 e 2022–2026 vêm sem descartados: total de notificações não é comparável entre anos; confirmados subestimam epidemias (inconclusivos até 35%) |
 | 7 | Possíveis duplicatas | proposto, aplicado | marcar (`possivel_duplicata`), não apagar; mostrar resultado com e sem elas | dados anonimizados não permitem confirmar; `nduplic_n` vazio em 99,7%; 0,7%–3,3% por ano |
 | 8 | Regras de limpeza (datas, sexo, idade, fichas) | aplicado | `02_banco.md`, tabela `notificacao_dengue_ne` | validadas coluna a coluna no `05_analise.ipynb`, seção 8 |
-| 9 | Data de referência | proposto | `ano` (notificação) para a série anual; `mes_sintomas` para sazonalidade | data dos sintomas é mais próxima do momento da infecção |
+| 9 | Data de referência | aplicado | `ano` (notificação) para a série anual. Na sazonalidade, extrair ano e mês de `dt_sintomas` e aplicar o recorte de 2000 a 2025 à data dos sintomas | a mesma data determina o mês, o ano e o período da análise sazonal |
 | 10 | Denominador | aplicado | `populacao_municipio_ano` do mesmo ano; 2007 e 2023 interpolados | IBGE não tem esses anos |
 | 11 | Ano epidêmico | proposto | incidência < 100 baixa, 100–299 média, ≥ 300 por 100 mil alta | classificação usada pelo Ministério da Saúde |
 | 12 | Período da análise | proposto | 2000 a 2025; 2026 fora (parcial); 2025 sinalizado como sujeito a revisão | `notificacao_dengue_ne` tem 1 linha de 1999 e 2026 inteiro |
-| 13 | Capital × interior (P2) | aplicado | em cada estado, comparar o município da capital com o conjunto dos demais municípios, pelo município de residência | o notebook `08_sazonalidade` compara o perfil mensal e o mês de pico nos dois grupos |
+| 13 | Capital × interior (P2) | aplicado | em cada estado, comparar residentes da capital e dos demais municípios usando os mesmos anos, com pelo menos 100 casos em cada grupo por ano | o notebook `08_sazonalidade` distingue o mês de maior ocorrência no perfil médio do mês central típico, obtido por média circular |
 | 14 | Município atípico (P3) | proposto | funil com superdispersão aditiva (Spiegelhalter 2005): z = log(O/E) ÷ √(1/E + τ²), τ² por estado; alerta \|z\| > 1,96, atípico \|z\| > 3,09; período 2000–2025 somado | o ajuste multiplicativo (φ de 150 a 770) marcava quase só municípios grandes; o aditivo compara todos os portes |
 | 15 | Ano epidêmico na P4 | proposto | por estado-ano (incidência ≥ 300), não pelo Nordeste todo | as epidemias não são simultâneas entre estados (correlação mediana 0,41, `07_incidencia`) |
 

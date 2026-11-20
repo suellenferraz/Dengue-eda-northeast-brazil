@@ -90,10 +90,14 @@ def painel_municipio_ano() -> pd.DataFrame:
 def casos_mes() -> pd.DataFrame:
     """Casos prováveis por UF, capital ou interior, ano e mês dos primeiros sintomas (2000–2025)."""
     df = consulta("""
-        SELECT m.uf_cod, n.cod_mun7 = ANY(%(capitais)s) AS capital, n.ano, n.mes_sintomas AS mes, count(*) AS casos
+        SELECT m.uf_cod, n.cod_mun7 = ANY(%(capitais)s) AS capital,
+               extract(year FROM n.dt_sintomas)::int AS ano,
+               extract(month FROM n.dt_sintomas)::int AS mes, count(*) AS casos
         FROM notificacao_dengue_ne n
         JOIN municipio m USING (cod_mun7)
-        WHERE n.caso_provavel AND n.ano BETWEEN %(ini)s AND %(fim)s AND n.mes_sintomas IS NOT NULL
+        WHERE n.caso_provavel
+          AND n.dt_sintomas >= make_date(%(ini)s, 1, 1)
+          AND n.dt_sintomas < make_date(%(fim)s + 1, 1, 1)
         GROUP BY 1, 2, 3, 4
     """, {"capitais": list(CAPITAIS), "ini": ANO_INICIO, "fim": ANO_FIM})
     df["uf"] = pd.Categorical(df["uf_cod"].map(UF_SIGLA), categories=UFS, ordered=True)
@@ -138,7 +142,7 @@ def faixa_incidencia(valor: float) -> str:
 
 
 def estatisticas_circulares(pesos) -> tuple[float, float]:
-    """Mês de pico (média circular, 1 a 12,99) e concentração R (0 = espalhado no ano, 1 = tudo num mês)."""
+    """Mês central (média circular em [0,5; 12,5)) e concentração R (0 a 1)."""
     w = np.asarray(pesos, float)
     if w.sum() == 0:
         return np.nan, np.nan

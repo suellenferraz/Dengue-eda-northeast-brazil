@@ -27,7 +27,7 @@ coleta (data/raw/)  →  carga (Postgres, camada bruta)  →  limpeza (camada tr
 | Análise do bruto | `05_analise` | qualidade dos dados e regras de limpeza |
 | Limpeza | `06_limpeza` | tabela `notificacao_dengue_ne` (residentes do Nordeste, 5,6 milhões) |
 | EDA, P1 | `07_incidencia` | incidência por estado e ano; anos epidêmicos |
-| EDA, P2 | `08_sazonalidade` | perfil mensal, mês de pico, capital × interior |
+| EDA, P2 | `08_sazonalidade` | perfil por ano e mês dos sintomas, mês de maior ocorrência, mês central e comparação capital × interior nos mesmos anos |
 | EDA, P3 | `09_municipios_atipicos` | municípios acima ou abaixo do esperado para o estado (funil) |
 | EDA, P4 | `10_perfil_idade_sexo` | idade e sexo em anos epidêmicos e não epidêmicos |
 
