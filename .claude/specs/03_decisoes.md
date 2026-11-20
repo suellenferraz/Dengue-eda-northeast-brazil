@@ -11,7 +11,7 @@ relatório.
 | 3 | Geografia | aplicado | município de **residência** (`id_mn_resi`) | inclui residentes notificados fora do Nordeste; 99,997% dos códigos têm par no IBGE |
 | 4 | Ligação com o IBGE | aplicado | `left(id_mn_resi, 6) = municipio.cod_mun6`, depois tudo por `cod_mun7` | vale para 7 dígitos (até 2006) e 6 dígitos (desde 2007) |
 | 5 | "Município ignorado" | aplicado | excluído (167 notificações) | código com UF mas sem município (ex.: `2900000`) |
-| 6 | Definição de caso | decidido (29/10/2026) | **caso provável** = classificação ≠ 5 (principal); **confirmado** = 1–4 ou 10–12 (comparação) | 2014, 2015 e 2022–2026 vêm sem descartados: total de notificações não é comparável entre anos; confirmados subestimam epidemias (inconclusivos até 35%) |
+| 6 | Definição de caso | aplicado (20/11/2026) | **caso provável** exclui `5` (descartado) e `13` (chikungunya), inclui vazios e `0`; **confirmado** usa 1–4 ou 10–12 (comparação) | definição do Ministério da Saúde, códigos e análise de sensibilidade em [02_banco.md](02_banco.md#definição-e-impacto-de-caso-provável) |
 | 7 | Possíveis duplicatas | proposto, aplicado | marcar (`possivel_duplicata`), não apagar; mostrar resultado com e sem elas | dados anonimizados não permitem confirmar; `nduplic_n` vazio em 99,7%; 0,7%–3,3% por ano |
 | 8 | Regras de limpeza (datas, sexo, idade, fichas) | aplicado | `02_banco.md`, tabela `notificacao_dengue_ne` | validadas coluna a coluna no `05_analise.ipynb`, seção 8 |
 | 9 | Data de referência | aplicado | `ano` (notificação) para a série anual. Na sazonalidade, extrair ano e mês de `dt_sintomas` e aplicar o recorte de 2000 a 2025 à data dos sintomas | a mesma data determina o mês, o ano e o período da análise sazonal |
@@ -26,4 +26,3 @@ relatório.
 - Comunicar ao grupo as decisões 6 e 7 e fechar a 2.
 - Confirmar os códigos do SINAN (`02_banco.md`, seção 4) no dicionário oficial.
 - Confirmar no painel do Ministério da Saúde o número usado na validação (Bahia 2024), hoje vindo de notícia que cita a Sesab.
-- Conferir num boletim do Ministério a definição oficial de "caso provável".

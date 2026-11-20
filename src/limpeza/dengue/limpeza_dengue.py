@@ -22,7 +22,7 @@ CREATE TABLE notificacao_dengue_ne (
     classificacao         text,
     criterio              text,
     evolucao              text,
-    caso_provavel         boolean  NOT NULL,                                 -- tudo menos descartado (5)
+    caso_provavel         boolean  NOT NULL,                                 -- exclui descartado (5) e chikungunya (13)
     caso_confirmado       boolean  NOT NULL,                                 -- 1 a 4 ou 10 a 12
     possivel_duplicata    boolean  NOT NULL,
     ano_arquivo           smallint NOT NULL
@@ -43,7 +43,7 @@ WITH base AS (
            CASE WHEN pg_input_is_valid(s.dt_sin_pri, 'date') THEN s.dt_sin_pri::date END AS dt_sin_bruta,
            CASE WHEN s.cs_sexo IN ('M', 'F') THEN s.cs_sexo END AS sexo,
            regexp_replace(coalesce(s.nu_idade_n, s.nu_idade), '\.0$', '') AS idade_cod,
-           coalesce(s.classi_fin, s.con_classi) AS classificacao,
+           nullif(btrim(coalesce(s.classi_fin, s.con_classi)), '') AS classificacao,
            coalesce(s.criterio, s.con_criter) AS criterio,
            coalesce(s.evolucao, s.con_evoluc) AS evolucao,
            row_number() OVER (
@@ -62,7 +62,7 @@ SELECT cod_mun7, cod_mun7_notificacao, ano, dt_notificacao,
        CASE WHEN idade_cod ~ '^[A4]\d{3}$' AND substr(idade_cod, 2)::int <= 110 THEN substr(idade_cod, 2)::smallint
             WHEN idade_cod ~ '^[MD321]\d{3}$' THEN 0 END,
        classificacao, criterio, evolucao,
-       classificacao IS DISTINCT FROM '5',
+       coalesce(classificacao NOT IN ('5', '13'), true),
        coalesce(classificacao IN ('1', '2', '3', '4', '10', '11', '12'), false),
        ordem_no_grupo > 1,
        ano_arquivo

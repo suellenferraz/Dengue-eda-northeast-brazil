@@ -97,10 +97,10 @@ a partir de `sinan_dengue`. Inclui residentes notificados fora do Nordeste. Excl
 | `mes_sintomas` | smallint | `dt_sintomas` | mês (1 a 12) |
 | `sexo` | char(1) | `cs_sexo` | M ou F; `I`, `O`, vazio → nulo |
 | `idade_anos` | smallint | `nu_idade` / `nu_idade_n` | remove `.0`; `A`/`4` → valor; `M`, `D`, `3`, `2`, `1` → 0; `I999`, sem unidade, > 110 → nulo |
-| `classificacao` | text | `con_classi` / `classi_fin` | fichas unificadas |
+| `classificacao` | text | `con_classi` / `classi_fin` | usa `classi_fin` quando presente, senão `con_classi`; remove espaços nas pontas, converte vazio em nulo e preserva `0` |
 | `criterio` | text | `con_criter` / `criterio` | fichas unificadas |
 | `evolucao` | text | `con_evoluc` / `evolucao` | fichas unificadas |
-| `caso_provavel` | boolean | `classificacao` | ≠ 5 (inclui vazio e código 0) |
+| `caso_provavel` | boolean | `classificacao` | exclui `5` (descartado) e `13` (chikungunya); inclui classificação ausente, `0` e registros inconclusivos |
 | `caso_confirmado` | boolean | `classificacao` | 1–4 (qualquer ano) ou 10–12 |
 | `possivel_duplicata` | boolean | várias | 2ª linha em diante de grupo igual em `ano_arquivo`, município e unidade de notificação, datas de notificação e sintomas, sexo, idade e residência |
 | `ano_arquivo` | smallint | `ano_arquivo` | CSV de origem |
@@ -110,11 +110,11 @@ duplicatas; vazios: sexo 6.769, idade 10.828, data de sintomas 13.046. 1 linha c
 **Validação:** Bahia 2024 = 232.455 casos prováveis × 232.623 da Sesab (−0,07%).
 
 ## 4. Códigos do SINAN
-Observados nos dados; a confirmação no dicionário oficial do SINAN está pendente.
+A classificação final foi conferida no campo 44 da [ficha histórica do SINAN](https://saude.sp.gov.br/resources/cve-centro-de-vigilancia-epidemiologica/homepage/downloads/dicionario-de-dados/dic_dados_netonline-dengue.pdf) e no campo 62 do [dicionário Dengue/Chikungunya do SINAN Online](https://portalsinan.saude.gov.br/images/documentos/Agravos/Dengue/DIC_DADOS_ONLINE.pdf).
 
 | Campo (ficha até 2006 / desde 2007) | Códigos |
 |---|---|
-| `con_classi` / `classi_fin` | até 2013: 1 dengue clássico, 2 com complicações, 3 febre hemorrágica, 4 síndrome do choque; desde 2014: 10 dengue, 11 com sinais de alarme, 12 grave, 13 chikungunya; sempre: 5 descartado, 8 inconclusivo; `0` (2000–2003) não documentado |
+| `con_classi` / `classi_fin` | ficha histórica: 1 dengue clássico, 2 com complicações, 3 febre hemorrágica, 4 síndrome do choque; ficha conjunta: 10 dengue, 11 com sinais de alarme, 12 grave, 13 chikungunya; ambas: 5 descartado. A base também contém 8 (inconclusivo na recodificação do SINAN) e 0 (sem significado definido nas fichas consultadas). |
 | `con_criter` / `criterio` | 1 laboratorial, 2 clínico-epidemiológico, 3 em investigação |
 | `con_evoluc` / `evolucao` | 1 cura, 2 óbito pelo agravo, 3 óbito por outras causas, 4 óbito em investigação, 9 ignorado |
 | `nu_idade` (até 2006) | letra + 3 dígitos: `A` anos, `M` meses, `D` dias, `I999` ignorado (ex.: `A046` = 46 anos) |
@@ -125,6 +125,21 @@ Observados nos dados; a confirmação no dicionário oficial do SINAN está pend
 
 Outros formatos por período: `sg_uf` e `sg_uf_not` vêm como sigla nos anos antigos e código IBGE nos recentes;
 `id_mn_resi` e `id_municip` têm 7 dígitos até 2006 e 6 depois.
+
+### Definição e impacto de caso provável
+
+O Ministério da Saúde inclui os casos suspeitos de dengue notificados, exceto os descartados. A classificação vazia indica ausência de encerramento registrado no campo e permanece elegível. O código `0` é preservado como valor de significado desconhecido e permanece elegível. O código `13` fica fora por identificar chikungunya na ficha conjunta. [Definição de caso provável no OpenDataSUS](https://dadosabertos.saude.gov.br/dataset/arboviroses-dengue) · [Recodificação para inconclusivo no SINAN](https://portalsinan.saude.gov.br/images/documentos/Agravos/NINDIV/DIC_DADOS_Notificacao_Individual_v5.pdf)
+
+Comparação na tabela tratada do Neon em 20/11/2026. A série anual usa o ano de notificação e o notebook 08 usa a data dos sintomas. Ambos cobrem 2000–2025.
+
+| Cenário | Série anual (total e variação) | Sazonalidade (total e variação) |
+|---|---:|---:|
+| Regra anterior e regra validada | 4.178.450 (0) | 4.169.990 (0) |
+| Excluir também classificações vazias | 3.964.585 (−213.865; −5,12%) | 3.956.577 (−213.413; −5,12%) |
+| Excluir também o código `0` | 4.122.764 (−55.686; −1,33%) | 4.114.307 (−55.683; −1,34%) |
+| Excluir também vazios e código `0` | 3.908.899 (−269.551; −6,45%) | 3.900.894 (−269.096; −6,45%) |
+
+A tabela tratada consultada não contém o código `13`, inclusive em 2026. As exclusões de vazio e `0` acima são cenários de sensibilidade. A maior redução em número de casos seria em 2002, com 81.584 a menos (30,47% dos 267.759 prováveis daquele ano).
 
 ## 5. Qualidade do bruto (Nordeste, `05_analise.ipynb`)
 | Ponto | Achado |

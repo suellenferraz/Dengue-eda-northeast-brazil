@@ -7,7 +7,7 @@ AUSENTES = {"", "nan", "NaN", "None", "null"}
 
 # Descricoes dos campos da ficha de dengue do SINAN (nomes em maiusculas; a busca ignora maiusculas).
 # A ficha mudou em 2007: alguns campos trocaram de nome (ficha antiga -> nova). Os codigos de
-# CLASSI_FIN tambem mudaram em 2014; confirme no dicionario oficial antes de usar.
+# CLASSI_FIN tambem mudaram em 2014; veja as fontes em .claude/specs/02_banco.md.
 DESCRICOES_SINAN = {
     "ANO_ARQUIVO": "Ano do arquivo de origem (coluna criada na carga)",
     "NU_NOTIFIC": "Numero da notificacao",
@@ -30,8 +30,8 @@ DESCRICOES_SINAN = {
     "CS_ESCOL_N": "Escolaridade",
     "SG_UF": "UF de residencia (sigla nos anos antigos, codigo IBGE nos recentes)",
     "ID_MN_RESI": "Municipio de residencia (codigo IBGE: 7 digitos ate 2006, 6 depois)",
-    "CON_CLASSI": "Classificacao final, ficha ate 2006 (equivale a CLASSI_FIN)",
-    "CLASSI_FIN": "Classificacao final, ficha desde 2007 (codigos mudaram em 2014)",
+    "CON_CLASSI": "Classificacao final, ficha ate 2006 (5 = descartado; 0 observado sem significado documentado)",
+    "CLASSI_FIN": "Classificacao final, ficha desde 2007 (5 = descartado; 13 = chikungunya na ficha conjunta)",
     "CON_CRITER": "Criterio de confirmacao, ficha ate 2006 (equivale a CRITERIO)",
     "CRITERIO": "Criterio de confirmacao (1 laboratorial, 2 clinico-epidemiologico)",
     "CON_EVOLUC": "Evolucao do caso, ficha ate 2006 (equivale a EVOLUCAO)",
