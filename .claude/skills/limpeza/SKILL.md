@@ -11,8 +11,8 @@ Regras, colunas e códigos do SINAN: `.claude/specs/02_banco.md` (seções 3 e 4
 | Arquivo | Papel |
 |---|---|
 | `notebooks/05_analise.ipynb` | estuda o bruto (só consultas): ligação com o IBGE, duplicadas, classificação, validação coluna a coluna |
-| `src/limpeza/dengue/limpeza_dengue.py` | cria `notificacao_dengue_ne` em SQL, numa transação (`criar()`; ~2,5 min) |
-| `notebooks/06_limpeza.ipynb` | regras, criação, conferência e validação com número oficial |
+| `src/limpeza/dengue/limpeza_dengue.py` | cria `notificacao_dengue_ne` em SQL numa transação (`criar()`) |
+| `notebooks/06_limpeza.ipynb` | regras, criação, conferência e comparação histórica para Bahia em 2024 |
 | `src/dicionario.py` | perfil de colunas (`perfil_colunas`, `salvar_markdown`); conta `"nan"` e vazio como nulos |
 
 ## Regras
@@ -23,11 +23,11 @@ Regras, colunas e códigos do SINAN: `.claude/specs/02_banco.md` (seções 3 e 4
 - Campos com nome diferente nas fichas (até 2006 / desde 2007): `nu_idade`/`nu_idade_n`, `con_classi`/`classi_fin`,
   `con_criter`/`criterio`, `con_evoluc`/`evolucao`. Sempre unificar antes de usar.
 - Idade: remover o `.0` (2008, 2012, 2016–2019) antes de decodificar; sem isso, 1,66 milhão de idades se perdem.
-- Classificação: caso provável = ≠ 5; confirmado = 1–4 (qualquer ano, há códigos antigos em 2016) ou 10–12.
+- Classificação: caso provável exclui os códigos 5 e 13 e inclui os vazios e o código 0. Caso confirmado usa os códigos 1–4 ou 10–12.
 - Antes de usar uma variável, confira o % de nulos por ano: vários campos são vazios nos anos antigos.
-- Códigos do SINAN ainda não conferidos no dicionário oficial; ao confirmar, cite a fonte em `02_banco.md`.
+- Fontes oficiais da classificação final e verificações restantes estão registradas em `02_banco.md` e `03_decisoes.md`.
 
 ## Verificação
 - Linhas da tratada = residentes do Nordeste no bruto − excluídos previstos (hoje 167).
 - Contagens de cada regra batem com o `05_analise`.
-- Validação externa: um total oficial (hoje Bahia 2024, Sesab) com diferença pequena.
+- Na comparação externa de Bahia em 2024, registre a fonte e a data da extração.

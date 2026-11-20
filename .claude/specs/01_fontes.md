@@ -8,15 +8,14 @@
 | Estados e municípios | IBGE, API de Localidades | consumo de API REST | `src/carga/ibge/carga_ibge.py` | tabelas `estado`, `municipio` |
 
 ## 1. Notificações de dengue (SINAN, Ministério da Saúde)
-Conjunto "Arboviroses - Dengue": https://dados.gov.br/dados/conjuntos-dados/arboviroses-dengue
-(a página é montada por JavaScript; os arquivos ficam no armazenamento do OpenDataSUS).
+Os CSVs anuais usados no projeto são publicados no conjunto [Arboviroses – Dengue do OpenDataSUS](https://dadosabertos.saude.gov.br/dataset/arboviroses-dengue). Na página consultada em 20/11/2026, o campo de licença exibia texto genérico e não informava uma licença específica do conjunto.
 
 ### 1.1 Opção B: CSV anual (usada)
 | Item | Valor |
 |---|---|
 | URL | `https://s3.sa-east-1.amazonaws.com/ckan.saude.gov.br/SINAN/Dengue/csv/DENGBR{aa}.csv.zip` (aa = 00 a 26) |
 | Cobertura | Brasil, 2000 a 2026, um ZIP com um CSV por ano |
-| Tamanho | ~900 MB compactados; 8,5 GB extraídos (2024: 1,8 GB) |
+| Tamanho na carga local de 20/11/2026 | 848 MB compactados e 8,2 GB extraídos (2024: 1,84 GB) |
 | Formato | CSV, separador `,`, UTF-8, cabeçalho na 1ª linha, colunas em MAIÚSCULAS, valores como texto, quebra de linha CRLF |
 | Ausentes | célula vazia |
 | Atualização (verificada em 29/10/2026) | 2000–2016 em 01/10/2026; 2017–2026 em 24/10/2026 |
@@ -71,7 +70,7 @@ Comportamento verificado na API real (28 e 29/10/2026):
 ### 1.3 Comparação A × B (verificada em 29/10/2026)
 | Item | A: API | B: CSV |
 |---|---|---|
-| Notificações | as mesmas | as mesmas (diferença máxima −0,24% por ano em 2000–2012; 6 de 13 anos idênticos) |
+| Notificações | contagens próximas às do CSV nos 13 anos comparados | diferença de até 0,24% na contagem anual em 2000–2012. As contagens coincidiram em 6 dos 13 anos |
 | Colunas | 196 em todos os anos | só as da ficha do período (63 a 121) |
 | Anos 2000–2006 | idade e classificação preenchidas nos nomes antigos (`nu_idade`, `con_classi`) | igual (`NU_IDADE`, `CON_CLASSI`); mesmo % de preenchimento |
 | Tempo (2000–2026) | dias | minutos |

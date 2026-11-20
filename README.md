@@ -31,11 +31,13 @@ coleta (data/raw/)  →  carga (Postgres, camada bruta)  →  limpeza (camada tr
 | EDA, P3 | `09_municipios_atipicos` | municípios acima ou abaixo do esperado para o estado (funil) |
 | EDA, P4 | `10_perfil_idade_sexo` | idade e sexo em anos epidêmicos e não epidêmicos |
 
-Tabelas e colunas: `.claude/specs/02_banco.md`. Decisões de análise: `.claude/specs/03_decisoes.md`.
+Consulte o [mapa das perguntas e dos notebooks](.claude/specs/00_projeto.md#2-perguntas-de-pesquisa), as [limitações da análise](.claude/specs/00_projeto.md#6-limitações), o [dicionário do banco](.claude/specs/02_banco.md) e as [decisões metodológicas](.claude/specs/03_decisoes.md).
 
 ## Como rodar
 
 Use Python 3.10+ e PostgreSQL 16+. A limpeza usa `pg_input_is_valid` para validar datas antes de convertê-las. O projeto requer pandas 2.1+ pelo uso de `DataFrame.map`. [Documentação do PostgreSQL 16](https://www.postgresql.org/docs/16/functions-info.html#FUNCTIONS-INFO-VALIDITY) · [Documentação do pandas 2.1](https://pandas.pydata.org/pandas-docs/version/2.1/reference/api/pandas.DataFrame.map.html)
+
+Se a instância local já estiver configurada em `data/postgres-local/`, inicie-a na porta `5433` conforme o README dentro dessa pasta e mantenha o `.env` existente. Com as tabelas carregadas, siga direto para [os notebooks no JupyterLab](#3-execute-os-notebooks-no-jupyterlab).
 
 ### 1. Crie o banco
 
@@ -56,7 +58,7 @@ Na raiz do repositório, use os comandos do seu terminal.
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-Copy-Item .env.example .env
+if (-not (Test-Path -LiteralPath '.env')) { Copy-Item .env.example .env }
 ```
 
 **Linux ou macOS**
@@ -65,7 +67,7 @@ Copy-Item .env.example .env
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
-cp .env.example .env
+test -e .env || cp .env.example .env
 ```
 
 Edite o `.env` na raiz do repositório. Informe o endereço (`PGHOST`) e a porta (`PGPORT`) do servidor, o nome do banco criado (`PGDATABASE`), o usuário com permissão para criar tabelas (`PGUSER`) e sua senha (`PGPASSWORD`).
@@ -85,8 +87,8 @@ Com as tabelas tratadas de dengue e do IBGE prontas no banco, execute os noteboo
 
 ### Espaço em disco
 
-- **Arquivos locais** — cerca de **9,4 GB** para a coleta da dengue de 2000 a 2026, somando **900 MB** de ZIPs e **8,5 GB** de CSVs extraídos. O coletor mantém os dois formatos em `data/raw/dengue_csv/`.
-- **PostgreSQL** — a tabela bruta `sinan_dengue` ocupa cerca de **7,9 GB**. Reserve cerca de **15 GB livres** no disco do PostgreSQL para acomodar também as tabelas tratadas, os índices e os temporários da execução.
+- **Arquivos locais** — cerca de **9,1 GB** medidos em `data/raw/` na carga de 2000 a 2026, incluindo os ZIPs, os CSVs extraídos e os dados do IBGE.
+- **PostgreSQL** — a instância local carregada ocupa cerca de **10,1 GB**. Reserve cerca de **15 GB livres** no disco do PostgreSQL para acomodar os temporários da carga e da limpeza.
 - **Execução completa** — reserve cerca de **25 GB livres** se os arquivos e o PostgreSQL estiverem no mesmo disco. A estimativa inclui margem para o ambiente Python e para o espaço temporário durante a carga e a limpeza.
 
 ### Alternativa para coletar, carregar e limpar pelo terminal
@@ -95,15 +97,15 @@ Com o `.env` configurado e o ambiente virtual ativado, os comandos abaixo prepar
 
 ```bash
 # coleta
-python src/coleta/dengue/coleta_dengue_csv.py --anos 2000 2026   # notificações (minutos, ~900 MB)
+python src/coleta/dengue/coleta_dengue_csv.py --anos 2000 2026   # notificações
 python src/coleta/ibge/coleta_ibge.py                            # população
 
 # carga e limpeza
-python src/carga/dengue/carga_dengue.py --anos 2000 2026          # sinan_dengue (~5 min)
+python src/carga/dengue/carga_dengue.py --anos 2000 2026          # sinan_dengue
 python src/carga/ibge/carga_ibge.py                               # tabelas do IBGE
-python src/limpeza/dengue/limpeza_dengue.py                       # notificacao_dengue_ne (~3 min)
+python src/limpeza/dengue/limpeza_dengue.py                       # notificacao_dengue_ne
 ```
-Depois da carga, os arquivos de `data/` podem ser apagados e baixados de novo quando precisar. A coleta pela API
+Depois da carga, os arquivos baixados em `data/raw/` podem ser removidos e baixados de novo quando necessário. Preserve `data/postgres-local/` se tiver a instância local configurada nessa pasta. A coleta pela API
 (`src/coleta/dengue/coleta_dengue_api.py`) é uma alternativa à coleta por CSV e pode levar dias.
 
 ## Estrutura
@@ -118,7 +120,8 @@ src/
   config.py          caminhos, período e conexão com o banco (lida do .env)
   dicionario.py      perfil das colunas para o dicionário de dados
 notebooks/           01 a 10, na ordem do pipeline
-data/                dados brutos baixados (não versionado; pode ser apagado depois da carga)
+data/raw/            arquivos baixados (não versionados)
+data/postgres-local/ instância PostgreSQL local, quando configurada (não versionada)
 .claude/specs/       00_projeto, 01_fontes, 02_banco, 03_decisoes, 99_uso_ia
 .claude/skills/      coleta, carga, limpeza, eda, registro-ia, welcome (instruções para o assistente de IA)
 .env.example         modelo do arquivo de acesso ao banco
