@@ -26,3 +26,7 @@ relatório.
 - Comunicar ao grupo as decisões 6 e 7 e fechar a 2.
 - Confirmar os códigos do SINAN (`02_banco.md`, seção 4) no dicionário oficial.
 - Confirmar no painel do Ministério da Saúde o número usado na validação (Bahia 2024), hoje vindo de notícia que cita a Sesab.
+
+## Sensibilidade dos municípios atípicos (P3)
+
+Na base local de 2000 a 2025, a regra principal (limiar 3,09 e winsorização de 10% em cada cauda) identificou 81 atípicos, 1 acima e 80 abaixo. Variando apenas o limiar para 2,58 ou 3,29, o total foi de 162 ou 61. Com winsorização de 5% ou 15%, foi de 47 ou 126. Ao excluir as possíveis duplicatas e recalcular a referência e a dispersão por estado, os 81 atípicos da análise principal permaneceram do mesmo lado e dois municípios passaram a ser atípicos abaixo. O cenário sem dispersão adicional sinalizou 1.595 municípios. O [notebook 09](../../notebooks/09_municipios_atipicos.ipynb) mantém a regra principal e registra entradas, saídas e mudanças de lado em cada cenário.
