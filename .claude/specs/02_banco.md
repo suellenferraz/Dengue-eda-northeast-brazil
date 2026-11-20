@@ -156,3 +156,17 @@ A tabela tratada local não contém o código `13`. No arquivo parcial de 2026, 
 | Idade | decimal (`4023.0`) em 2008, 2012, 2016–2019 (1,66 milhão); ~400 sem unidade; 1.017 acima de 110; confere com `ano_nasc` em 99,98% |
 | Critério / evolução | preenchidos em 68%–89% e 47%–89%, conforme o ano |
 | Confirmação por estado | varia muito (2024: SE 99%, CE 97%, BA 73%, RN 41% dos prováveis) |
+
+## 6. Cobertura da população e reconciliação das junções
+
+Consulta ao PostgreSQL local em 20/11/2026 para o período de 2000 a 2025. A grade de 1.794 municípios do cadastro atual por 26 anos contém 46.644 pares município–ano. Desses, 46.627 (99,964%) têm população válida. São 37.665 estimativas do IBGE, 5.375 observações censitárias e 3.587 valores interpolados. Para 8.352 dos pares com população válida, houve zero casos prováveis.
+
+Os 17 pares sem população correspondem aos anos de 2000 a 2007 para sete municípios, conforme a lista no notebook. Nenhum dos 17 tem notificação. Os 40.125 pares com alguma notificação (5.474.491 notificações) têm população válida. Não houve chave duplicada na junção. A comparação por município e ano confirmou a igualdade entre a agregação da tabela tratada com população válida e o painel usado na EDA.
+
+| Medida | Na tabela tratada | Sem população válida | No painel da EDA |
+|---|---:|---:|---:|
+| Casos prováveis | 4.178.450 | 0 | 4.178.450 |
+| Casos prováveis sem possíveis duplicatas | 4.098.441 | 0 | 4.098.441 |
+| Casos confirmados | 2.884.120 | 0 | 2.884.120 |
+
+A tabela com cada par sem população e os resultados da reconciliação estão no [notebook 09](../../notebooks/09_municipios_atipicos.ipynb).
