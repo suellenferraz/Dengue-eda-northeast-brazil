@@ -41,10 +41,7 @@ O pipeline documentado usa o PostgreSQL local. A publicação de agregados no Ne
 Detalhes das tabelas: `02_banco.md`. Fontes: `01_fontes.md`.
 
 ## 5. Andamento
-
-Em 20/11/2026, a carga local reuniu 32.530.748 notificações brutas de 2000 a 2026 e 5.603.830 registros tratados
-de residentes do Nordeste. A notificação mais recente na tabela tratada é de 31/10/2026. O recorte da EDA termina
-em 2025.
+A carga local reuniu 32.530.748 notificações brutas de 2000 a 2026 e 5.603.830 registros tratados de residentes do Nordeste. A notificação mais recente na tabela tratada é de 31/10/2026. O recorte da EDA termina em 2025.
 
 | Etapa | Notebook | Script | Saída | Situação |
 |---|---|---|---|---|
@@ -52,10 +49,10 @@ em 2025.
 | Carga dengue | `02_carga_dengue` | `src/carga/dengue/carga_dengue.py` | `sinan_dengue` | feito |
 | Coleta IBGE | `03_coleta_ibge` | `src/coleta/ibge/coleta_ibge.py` | `data/raw/ibge/` | feito |
 | Carga IBGE | `04_carga_ibge` | `src/carga/ibge/carga_ibge.py` | `populacao_ne`, `estado`, `municipio`, `populacao_municipio_ano` | feito |
-| Análise do bruto | `05_analise` | — | achados de qualidade | análise original registrada. Reexecução local interrompida por lentidão |
+| Análise do bruto | `05_analise` | — | achados de qualidade | reexecutada no banco local |
 | Limpeza | `06_limpeza` | `src/limpeza/dengue/limpeza_dengue.py` | `notificacao_dengue_ne` | concluída por ano com a mesma regra SQL do notebook |
 | Consistência da tratada | `09_municipios_atipicos` | `src/eda/eda.py` | cobertura de população e reconciliação dos totais | validada por município e ano |
-| EDA (P1 a P4) | `07_incidencia`, `08_sazonalidade`, `09_municipios_atipicos`, `10_perfil_idade_sexo` | `src/eda/eda.py` | gráficos e achados | reexecutada no banco local em 20/11/2026 |
+| EDA (P1 a P4) | `07_incidencia`, `08_sazonalidade`, `09_municipios_atipicos`, `10_perfil_idade_sexo` | `src/eda/eda.py` | gráficos e achados | reexecutada no banco local |
 | Dashboard | — | — | tabelas agregadas no Neon | a fazer |
 
 ## 6. Limitações

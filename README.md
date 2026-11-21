@@ -33,6 +33,8 @@ coleta (data/raw/)  →  carga (Postgres, camada bruta)  →  limpeza (camada tr
 
 Consulte o [mapa das perguntas e dos notebooks](.claude/specs/00_projeto.md#2-perguntas-de-pesquisa), as [limitações da análise](.claude/specs/00_projeto.md#6-limitações), o [dicionário do banco](.claude/specs/02_banco.md) e as [decisões metodológicas](.claude/specs/03_decisoes.md).
 
+As versões do ambiente e as conferências realizadas estão no [registro da execução final](.claude/specs/04_execucao_final.md).
+
 ## Como rodar
 
 Use Python 3.10+ e PostgreSQL 16+. A limpeza usa `pg_input_is_valid` para validar datas antes de convertê-las. O projeto requer pandas 2.1+ pelo uso de `DataFrame.map`. [Documentação do PostgreSQL 16](https://www.postgresql.org/docs/16/functions-info.html#FUNCTIONS-INFO-VALIDITY) · [Documentação do pandas 2.1](https://pandas.pydata.org/pandas-docs/version/2.1/reference/api/pandas.DataFrame.map.html)
