@@ -29,10 +29,17 @@ COR = {
     "principal": "#2a78d6", "comparacao": "#eb6834", "referencia": "#8c8b86",
     "limiar": "#52514e", "texto": "#0b0b0b", "texto2": "#52514e", "grade": "#e4e3df",
 }
-SEQUENCIAL = mpl.colors.LinearSegmentedColormap.from_list(
-    "azul", ["#f4f8fe", "#cde2fb", "#86b6ef", "#3987e5", "#256abf", "#184f95", "#0d366b"])
+SEQUENCIAL = mpl.colormaps["YlOrRd"]
 DIVERGENTE = mpl.colors.LinearSegmentedColormap.from_list(
-    "azul_vermelho", ["#1c5cab", "#86b6ef", "#f0efec", "#ef9a99", "#b5302f"])
+    "azul_vermelho", ["#176b83", "#a1cbd8", "#f7f5ee", "#f6bb82", "#a50026"])
+
+
+def cor_rotulo(cor) -> str:
+    """Escolhe texto branco ou preto pelo contraste com a cor de fundo."""
+    rgb = np.asarray(mpl.colors.to_rgb(cor))
+    linear = np.where(rgb <= 0.04045, rgb / 12.92, ((rgb + 0.055) / 1.055) ** 2.4)
+    luminancia = linear @ [0.2126, 0.7152, 0.0722]
+    return "white" if luminancia < 0.179 else "black"
 
 
 def estilo():
