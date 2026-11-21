@@ -6,6 +6,7 @@
 | Notificações de dengue (opção A, alternativa) | API Dados Abertos | consumo de API REST | `src/coleta/dengue/coleta_dengue_api.py` | `data/raw/dengue_api/ano=AAAA/` |
 | População por município | IBGE, API SIDRA | consumo de API REST | `src/coleta/ibge/coleta_ibge.py` | `data/raw/ibge/` |
 | Estados e municípios | IBGE, API de Localidades | consumo de API REST | `src/carga/ibge/carga_ibge.py` | tabelas `estado`, `municipio` |
+| Limites estaduais do Nordeste | [IBGE, API de Malhas](https://servicodados.ibge.gov.br/api/v3/malhas/regioes/2?formato=application%2Fvnd.geo%2Bjson&qualidade=minima&intrarregiao=UF) | GeoJSON simplificado baixado em 20/11/2026 | [notebook 07](../../notebooks/07_incidencia.ipynb) | `src/eda/malha_ne_ibge.geojson` |
 
 ## 1. Notificações de dengue (SINAN, Ministério da Saúde)
 Os CSVs anuais usados no projeto são publicados no conjunto [Arboviroses – Dengue do OpenDataSUS](https://dadosabertos.saude.gov.br/dataset/arboviroses-dengue). Na página consultada em 20/11/2026, o campo de licença exibia texto genérico e não informava uma licença específica do conjunto.
